@@ -1,0 +1,6 @@
+- create new sanity projects
+- copy .env.example to .env and update the project ID - prod and dev
+- deploy
+- update the API keys
+- create new vercel project - update env variables
+- copy env file 
