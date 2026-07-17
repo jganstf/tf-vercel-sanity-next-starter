@@ -8,14 +8,32 @@ import pluralize from 'pluralize-esm'
  * Learn more: https://www.sanity.io/docs/structure-builder-introduction
  */
 
-const DISABLED_TYPES = ['settings', 'assist.instruction.context']
+// Types handled manually below (nested lists / singletons) rather than via the default flat list.
+const DISABLED_TYPES = [
+  'settings',
+  'postSettings',
+  'post',
+  'postCategory',
+  'assist.instruction.context',
+]
 
 export const structure: StructureResolver = (S: StructureBuilder) =>
   S.list()
     .title('Website Content')
     .items([
+      // Posts, nested with its Categories sub-list.
+      S.listItem()
+        .title('Posts')
+        .child(
+          S.list()
+            .title('Posts')
+            .items([
+              S.documentTypeListItem('post').title('All Posts'),
+              S.documentTypeListItem('postCategory').title('Categories'),
+            ]),
+        ),
       ...S.documentTypeListItems()
-        // Remove the "assist.instruction.context" and "settings" content  from the list of content types
+        // Remove types handled manually above from the default flat list.
         .filter((listItem: any) => !DISABLED_TYPES.includes(listItem.getId()))
         // Pluralize the title of each document type.  This is not required but just an option to consider.
         .map((listItem) => {
@@ -25,5 +43,9 @@ export const structure: StructureResolver = (S: StructureBuilder) =>
       S.listItem()
         .title('Site Settings')
         .child(S.document().schemaType('settings').documentId('siteSettings'))
+        .icon(CogIcon),
+      S.listItem()
+        .title('Post Settings')
+        .child(S.document().schemaType('postSettings').documentId('postSettings'))
         .icon(CogIcon),
     ])

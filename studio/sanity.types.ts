@@ -127,6 +127,33 @@ export type Button = {
   link?: Link
 }
 
+export type PostCategory = {
+  _id: string
+  _type: 'postCategory'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  slug: Slug
+  description?: string
+}
+
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
+export type PostSettings = {
+  _id: string
+  _type: 'postSettings'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  postsPerPage: number
+  loadMoreMode: 'button' | 'infiniteScroll'
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -210,6 +237,13 @@ export type PersonReference = {
   [internalGroqTypeReferenceTo]?: 'person'
 }
 
+export type PostCategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'postCategory'
+}
+
 export type Post = {
   _id: string
   _type: 'post'
@@ -230,6 +264,11 @@ export type Post = {
   }
   date?: string
   author?: PersonReference
+  categories?: Array<
+    {
+      _key: string
+    } & PostCategoryReference
+  >
 }
 
 export type Person = {
@@ -248,12 +287,6 @@ export type Person = {
     alt?: string
     _type: 'image'
   }
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
 }
 
 export type SanityAssistInstructionTask = {
@@ -500,14 +533,17 @@ export type AllSanitySchemaTypes =
   | BlockContentTextOnly
   | BlockContent
   | Button
+  | PostCategory
+  | Slug
+  | PostSettings
   | Settings
   | SanityImageCrop
   | SanityImageHotspot
   | Page
   | PersonReference
+  | PostCategoryReference
   | Post
   | Person
-  | Slug
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations

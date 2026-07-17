@@ -11,6 +11,7 @@ const postFields = /* groq */ `
   coverImage,
   "date": coalesce(date, _updatedAt),
   "author": author->{firstName, lastName, picture},
+  "categories": categories[]->{_id, title, "slug": slug.current},
 `
 
 const linkReference = /* groq */ `
@@ -98,4 +99,32 @@ export const postPagesSlugs = defineQuery(`
 export const pagesSlugs = defineQuery(`
   *[_type == "page" && defined(slug.current)]
   {"slug": slug.current}
+`)
+
+export const postSettingsQuery = defineQuery(`*[_type == "postSettings"][0]`)
+
+export const postCategoriesQuery = defineQuery(`
+  *[_type == "postCategory"] | order(title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    description
+  }
+`)
+
+const archivePostsFilter = /* groq */ `
+  _type == "post" &&
+  defined(slug.current) &&
+  ($search == "" || title match $search + "*" || excerpt match $search + "*") &&
+  ($category == "" || $category in categories[]->slug.current)
+`
+
+export const archivePostsQuery = defineQuery(`
+  *[${archivePostsFilter}] | order(date desc, _updatedAt desc) [$offset...$end] {
+    ${postFields}
+  }
+`)
+
+export const archivePostsCountQuery = defineQuery(`
+  count(*[${archivePostsFilter}])
 `)
