@@ -15,3 +15,9 @@ export type DereferencedLink = {
   post?: string | null
   openInNewTab?: boolean
 }
+
+// Represents a footer legalMenu item after GROQ dereferencing
+export type DereferencedLegalMenuItem = {
+  label: string
+  link: DereferencedLink
+}

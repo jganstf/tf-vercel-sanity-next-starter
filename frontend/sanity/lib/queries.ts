@@ -27,14 +27,21 @@ const linkFields = /* groq */ `
       }
 `
 
+export const footerQuery = defineQuery(`
+  *[_type == "footer"][0]{
+    legalMenu[]{
+      label,
+      ${linkFields}
+    }
+  }
+`)
+
 export const getPageQuery = defineQuery(`
   *[_type == 'page' && slug.current == $slug][0]{
     _id,
     _type,
     name,
     slug,
-    heading,
-    subheading,
     "pageBuilder": pageBuilder[]{
       ...,
       _type == "callToAction" => {
