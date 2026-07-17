@@ -38,6 +38,8 @@ function resolveHref(documentType?: string, slug?: string): string | undefined {
       return slug ? `/posts/${slug}` : undefined
     case 'page':
       return slug ? `/${slug}` : undefined
+    case 'staff':
+      return slug ? `/staff/${slug}` : undefined
     default:
       console.warn('Invalid document type:', documentType)
       return undefined
