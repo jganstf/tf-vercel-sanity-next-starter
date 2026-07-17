@@ -81,7 +81,7 @@ export const post = defineType({
       name: 'author',
       title: 'Author',
       type: 'reference',
-      to: [{type: 'person'}],
+      to: [{type: 'staff'}],
     }),
   ],
   // List preview configuration. https://www.sanity.io/docs/previews-list-views

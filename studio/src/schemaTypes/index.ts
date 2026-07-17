@@ -1,4 +1,4 @@
-import {person} from './documents/person'
+import {staff} from './documents/staff'
 import {page} from './documents/page'
 import {post} from './documents/post'
 import {callToAction} from './objects/callToAction'
@@ -17,7 +17,7 @@ export const schemaTypes = [
   // Documents
   page,
   post,
-  person,
+  staff,
   // Objects
   button,
   blockContent,

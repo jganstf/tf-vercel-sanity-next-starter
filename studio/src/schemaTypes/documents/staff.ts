@@ -1,16 +1,16 @@
-import {UserIcon} from '@sanity/icons'
+import {UsersIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
-import type {Person} from '../../../sanity.types'
+import type {Staff} from '../../../sanity.types'
 
 /**
- * Person schema.  Define and edit the fields for the 'person' content type.
+ * Staff schema.  Define and edit the fields for the 'staff' content type.
  * Learn more: https://www.sanity.io/docs/studio/schema-types
  */
 
-export const person = defineType({
-  name: 'person',
-  title: 'Person',
-  icon: UserIcon,
+export const staff = defineType({
+  name: 'staff',
+  title: 'Staff',
+  icon: UsersIcon,
   type: 'document',
   fields: [
     defineField({
@@ -26,6 +26,18 @@ export const person = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'slug',
+      title: 'Slug',
+      type: 'slug',
+      description: 'A slug is required for the staff member to show up on the staff archive page',
+      options: {
+        source: (doc) => `${(doc as Staff).firstName || ''} ${(doc as Staff).lastName || ''}`,
+        maxLength: 96,
+        isUnique: (value, context) => context.defaultIsUnique(value, context),
+      },
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
       name: 'picture',
       title: 'Picture',
       type: 'image',
@@ -38,7 +50,7 @@ export const person = defineType({
           validation: (rule) => {
             // Custom validation to ensure alt text is provided if the image is present. https://www.sanity.io/docs/validation
             return rule.custom((alt, context) => {
-              const document = context.document as Person
+              const document = context.document as Staff
               if (document?.picture?.asset?._ref && !alt) {
                 return 'Required'
               }
@@ -55,6 +67,24 @@ export const person = defineType({
       },
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'department',
+      title: 'Department',
+      type: 'reference',
+      to: [{type: 'department'}],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'jobTitle',
+      title: 'Job Title',
+      type: 'string',
+    }),
+    defineField({
+      name: 'bio',
+      title: 'Bio',
+      type: 'text',
+      rows: 4,
+    }),
   ],
   // List preview configuration. https://www.sanity.io/docs/previews-list-views
   preview: {
@@ -62,11 +92,12 @@ export const person = defineType({
       firstName: 'firstName',
       lastName: 'lastName',
       picture: 'picture',
+      departmentTitle: 'department.title',
     },
     prepare(selection) {
       return {
         title: `${selection.firstName} ${selection.lastName}`,
-        subtitle: 'Person',
+        subtitle: selection.departmentTitle || 'Staff',
         media: selection.picture,
       }
     },
