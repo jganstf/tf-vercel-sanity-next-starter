@@ -387,7 +387,7 @@ git commit -m "feat: nest post categories and add Post Settings in studio struct
 - Produces:
   - `postSettingsQuery` → typegen result `PostSettingsQueryResult`
   - `postCategoriesQuery` → typegen result `PostCategoriesQueryResult` (array of `{_id, title, slug, description}`)
-  - `archivePostsQuery` → typegen result `ArchivePostsQueryResult`, params `{search: string, category: string, offset: number, limit: number}`
+  - `archivePostsQuery` → typegen result `ArchivePostsQueryResult`, GROQ params `{search: string, category: string, offset: number, end: number}` (NOTE: the slice uses two independent numeric params `$offset` and `$end`, not arithmetic in-query, because groq-js typegen cannot statically evaluate a slice bound expression like `$offset + $limit` — it silently fails to generate `ArchivePostsQueryResult` at all. Callers compute `end = offset + limit` in JS before passing params.)
   - `archivePostsCountQuery` → typegen result `ArchivePostsCountQueryResult` (number), params `{search: string, category: string}`
   - `postFields` fragment now includes `categories`, so `AllPostsQueryResult`, `PostQueryResult`, `ArchivePostsQueryResult` all gain a `categories` array field. Consumed by Task 6 (`PostCard`) and Task 8/9 (`PostArchive`, archive page).
 
@@ -433,7 +433,7 @@ const archivePostsFilter = /* groq */ `
 `
 
 export const archivePostsQuery = defineQuery(`
-  *[${archivePostsFilter}] | order(date desc, _updatedAt desc) [$offset...$offset + $limit] {
+  *[${archivePostsFilter}] | order(date desc, _updatedAt desc) [$offset...$end] {
     ${postFields}
   }
 `)
@@ -637,7 +637,10 @@ export async function fetchArchivePosts({
   const [{data: posts}, {data: total}] = await Promise.all([
     sanityFetch({
       query: archivePostsQuery,
-      params: {search, category, offset, limit},
+      // archivePostsQuery's GROQ slice takes two independent numeric params ($offset, $end)
+      // rather than an in-query arithmetic expression, because groq-js typegen cannot
+      // statically evaluate a slice bound like `$offset + $limit` (see Task 5 notes).
+      params: {search, category, offset, end: offset + limit},
     }),
     sanityFetch({
       query: archivePostsCountQuery,
@@ -929,7 +932,8 @@ export default async function PostsArchivePage(props: PageProps<'/posts'>) {
     sanityFetch({query: postCategoriesQuery}),
     sanityFetch({
       query: archivePostsQuery,
-      params: {search, category, offset: 0, limit: postsPerPage},
+      // See Task 5/7 notes: archivePostsQuery's slice takes independent $offset/$end params.
+      params: {search, category, offset: 0, end: postsPerPage},
     }),
     sanityFetch({query: archivePostsCountQuery, params: {search, category}}),
   ])
