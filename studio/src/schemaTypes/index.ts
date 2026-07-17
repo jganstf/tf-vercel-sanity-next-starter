@@ -5,6 +5,7 @@ import {post} from './documents/post'
 import {callToAction} from './objects/callToAction'
 import {infoSection} from './objects/infoSection'
 import {settings} from './singletons/settings'
+import {staffSettings} from './singletons/staffSettings'
 import {link} from './objects/link'
 import {blockContent} from './objects/blockContent'
 import button from './objects/button'
@@ -15,6 +16,7 @@ import {blockContentTextOnly} from './objects/blockContentTextOnly'
 export const schemaTypes = [
   // Singletons
   settings,
+  staffSettings,
   // Documents
   page,
   post,
