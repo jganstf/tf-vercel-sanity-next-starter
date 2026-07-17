@@ -6,18 +6,29 @@ import Avatar from '@/app/components/Avatar'
 import {dataAttr} from '@/sanity/lib/utils'
 
 export default function PostCard({post}: {post: AllPostsQueryResult[number]}) {
-  const {_id, title, slug, excerpt, date, author} = post
+  const {_id, title, slug, excerpt, date, author, categories} = post
 
   return (
     <article
       data-sanity={dataAttr({id: _id, type: 'post', path: 'title'}).toString()}
-      key={_id}
       className="border border-gray-200 rounded-sm p-6 bg-gray-50 flex flex-col justify-between transition-colors hover:bg-white relative"
     >
       <Link className="hover:text-brand underline transition-colors" href={`/posts/${slug}`}>
         <span className="absolute inset-0 z-10" />
       </Link>
       <div>
+        {categories && categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-2">
+            {categories.map((cat) => (
+              <span
+                key={cat._id}
+                className="text-xs text-gray-500 bg-gray-100 rounded-full px-2 py-0.5"
+              >
+                {cat.title}
+              </span>
+            ))}
+          </div>
+        )}
         <h3 className="text-2xl mb-4">{title}</h3>
 
         <p className="line-clamp-3 text-sm leading-6 text-gray-600 max-w-[70ch]">{excerpt}</p>

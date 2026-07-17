@@ -1,4 +1,5 @@
 import type {Metadata} from 'next'
+import {Suspense} from 'react'
 
 import PostArchive from '@/app/components/PostArchive'
 import {sanityFetch} from '@/sanity/lib/live'
@@ -42,15 +43,17 @@ export default async function PostsArchivePage(props: PageProps<'/posts'>) {
   return (
     <div className="container my-12 lg:my-24">
       <h1 className="text-4xl text-gray-900 sm:text-5xl mb-8">Blog Archive</h1>
-      <PostArchive
-        initialPosts={posts ?? []}
-        initialHasMore={(posts?.length ?? 0) < (total ?? 0)}
-        categories={categories ?? []}
-        postsPerPage={postsPerPage}
-        loadMoreMode={loadMoreMode}
-        initialSearch={search}
-        initialCategory={category}
-      />
+      <Suspense fallback={null}>
+        <PostArchive
+          initialPosts={posts ?? []}
+          initialHasMore={(posts?.length ?? 0) < (total ?? 0)}
+          categories={categories ?? []}
+          postsPerPage={postsPerPage}
+          loadMoreMode={loadMoreMode}
+          initialSearch={search}
+          initialCategory={category}
+        />
+      </Suspense>
     </div>
   )
 }

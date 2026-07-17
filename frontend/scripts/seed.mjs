@@ -1,3 +1,12 @@
+/**
+ * Seeds sample post categories, posts, and post settings into the configured Sanity dataset.
+ *
+ * Requires env vars: NEXT_PUBLIC_SANITY_PROJECT_ID, NEXT_PUBLIC_SANITY_DATASET,
+ * NEXT_PUBLIC_SANITY_API_VERSION (optional), and SANITY_API_WRITE_TOKEN (needs write access).
+ *
+ * Run from `frontend/`:
+ *   node --env-file=.env.local scripts/seed.mjs
+ */
 import {createClient} from '@sanity/client'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID

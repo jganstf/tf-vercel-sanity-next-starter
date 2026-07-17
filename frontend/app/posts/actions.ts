@@ -2,7 +2,7 @@
 
 import {sanityFetch} from '@/sanity/lib/live'
 import {archivePostsCountQuery, archivePostsQuery} from '@/sanity/lib/queries'
-import type {AllPostsQueryResult} from '@/sanity.types'
+import type {ArchivePostsQueryResult} from '@/sanity.types'
 
 export async function fetchArchivePosts({
   search,
@@ -14,7 +14,7 @@ export async function fetchArchivePosts({
   category: string
   offset: number
   limit: number
-}): Promise<{posts: AllPostsQueryResult; hasMore: boolean}> {
+}): Promise<{posts: ArchivePostsQueryResult; hasMore: boolean}> {
   const [{data: posts}, {data: total}] = await Promise.all([
     sanityFetch({
       query: archivePostsQuery,

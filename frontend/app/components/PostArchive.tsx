@@ -60,8 +60,9 @@ export default function PostArchive({
   // Debounce free-text search input into a URL update.
   useEffect(() => {
     const handle = setTimeout(() => {
-      if (searchInput !== search) {
-        updateQuery({q: searchInput})
+      const trimmed = searchInput.trim()
+      if (trimmed !== search) {
+        updateQuery({q: trimmed})
       }
     }, 400)
     return () => clearTimeout(handle)
