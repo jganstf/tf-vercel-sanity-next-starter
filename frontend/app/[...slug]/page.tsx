@@ -1,4 +1,4 @@
-import type {Metadata} from 'next'
+import type {Metadata, ResolvingMetadata} from 'next'
 import Head from 'next/head'
 
 import PageBuilderPage from '@/components/PageBuilder'
@@ -6,6 +6,8 @@ import {sanityFetch} from '@/sanity/lib/live'
 import {getPageQuery, pagesSlugs} from '@/sanity/lib/queries'
 import {GetPageQueryResult} from '@/sanity.types'
 import {PageOnboarding} from '@/components/Onboarding'
+import {resolveOpenGraphImage} from '@/sanity/lib/utils'
+import { notFound } from 'next/navigation'
 
 /**
  * Generate the static params for the page, including nested pages.
@@ -25,7 +27,10 @@ export async function generateStaticParams() {
  * Generate metadata for the page.
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
-export async function generateMetadata(props: PageProps<'/[...slug]'>): Promise<Metadata> {
+export async function generateMetadata(
+  props: PageProps<'/[...slug]'>,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
   const params = await props.params
   const {data: page} = await sanityFetch({
     query: getPageQuery,
@@ -34,8 +39,16 @@ export async function generateMetadata(props: PageProps<'/[...slug]'>): Promise<
     stega: false,
   })
 
+  const previousImages = (await parent).openGraph?.images || []
+  const ogImage = resolveOpenGraphImage(page?.seo?.image)
+
   return {
-    title: page?.name,
+    title: page?.seo?.title,
+    description: page?.seo?.description,
+    openGraph: {
+      images: ogImage ? [ogImage, ...previousImages] : previousImages,
+    },
+    robots: page?.seo?.noIndex ? {index: false, follow: false} : undefined,
   } satisfies Metadata
 }
 
@@ -46,27 +59,19 @@ export default async function Page(props: PageProps<'/[...slug]'>) {
   ])
 
   if (!page?._id) {
-    return (
-      <div className="py-40">
-        <PageOnboarding />
-      </div>
-    )
+    // return (
+    //   <div className="py-40">
+    //     <PageOnboarding />
+    //   </div>
+    // )
+    return notFound()
   }
 
   return (
     <div className="my-12 lg:my-24">
       <Head>
-        <title>{page.name}</title>
+        <title>{page.title}</title>
       </Head>
-      <div className="">
-        <div className="container">
-          <div className="pb-6 border-b border-gray-100">
-            <div className="max-w-3xl">
-              <h1 className="text-4xl text-gray-900 sm:text-5xl lg:text-7xl">{page.name}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
       <PageBuilderPage page={page as GetPageQueryResult} />
     </div>
   )

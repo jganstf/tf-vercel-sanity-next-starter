@@ -151,10 +151,10 @@ export function PageOnboarding() {
         }}
         link={{
           title: 'Create Page',
-          href: `${studioUrl}/structure/intent/create/template=page;type=page;path=name`,
+          href: `${studioUrl}/structure/intent/create/template=page;type=page;path=title`,
         }}
         type="page"
-        path="name"
+        path="title"
       />
     </div>
   )

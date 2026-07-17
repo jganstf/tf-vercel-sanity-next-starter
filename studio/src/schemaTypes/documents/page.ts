@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {DocumentIcon} from '@sanity/icons'
+import type {Page} from '../../../sanity.types'
 
 /**
  * Page schema.  Define and edit the fields for the 'page' content type.
@@ -11,11 +12,17 @@ export const page = defineType({
   title: 'Page',
   type: 'document',
   icon: DocumentIcon,
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'settings', title: 'Settings'},
+    {name: 'seo', title: 'SEO'},
+  ],
   fields: [
     defineField({
-      name: 'name',
-      title: 'Name',
+      name: 'title',
+      title: 'Title',
       type: 'string',
+      group: 'content',
       validation: (Rule) => Rule.required(),
     }),
 
@@ -24,9 +31,10 @@ export const page = defineType({
       title: 'Slug',
       type: 'slug',
       description: 'The URL segment for this page, relative to its parent page (if any).',
+      group: 'settings',
       validation: (Rule) => Rule.required(),
       options: {
-        source: 'name',
+        source: 'title',
         maxLength: 96,
       },
     }),
@@ -35,6 +43,7 @@ export const page = defineType({
       title: 'Parent page',
       description: 'Nest this page under another page to build a nested URL, e.g. /parent/child.',
       type: 'reference',
+      group: 'settings',
       to: [{type: 'page'}],
       options: {
         filter: ({document}) => ({
@@ -47,9 +56,40 @@ export const page = defineType({
       },
     }),
     defineField({
+      name: 'coverImage',
+      title: 'Cover image',
+      description: 'Featured image for this page.',
+      type: 'image',
+      group: 'settings',
+      options: {
+        hotspot: true,
+        aiAssist: {
+          imageDescriptionField: 'alt',
+        },
+      },
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative text',
+          description: 'Important for SEO and accessibility.',
+          validation: (rule) => {
+            return rule.custom((alt, context) => {
+              const document = context.document as Page
+              if (document?.coverImage?.asset?._ref && !alt) {
+                return 'Required'
+              }
+              return true
+            })
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'pageBuilder',
       title: 'Page builder',
       type: 'array',
+      group: 'content',
       of: [{type: 'callToAction'}, {type: 'infoSection'}, {type: 'heroSecondary'}],
       options: {
         insertMenu: {
@@ -64,11 +104,17 @@ export const page = defineType({
         },
       },
     }),
+    defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'seo',
+      group: 'seo',
+    }),
   ],
   preview: {
     select: {
-      title: 'name',
-      parentName: 'parent.name',
+      title: 'title',
+      parentName: 'parent.title',
     },
     prepare({title, parentName}) {
       return {

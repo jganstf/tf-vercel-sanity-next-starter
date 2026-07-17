@@ -57,10 +57,16 @@ export const getPageQuery = defineQuery(`
   *[_type == 'page']{
     _id,
     _type,
-    name,
+    title,
     slug,
     parent,
     ${pagePath},
+    "seo": {
+      "title": coalesce(seo.title, title),
+      "description": seo.description,
+      "image": seo.image,
+      "noIndex": seo.noIndex == true
+    },
     "pageBuilder": pageBuilder[]{
       ...,
       _type == "callToAction" => {

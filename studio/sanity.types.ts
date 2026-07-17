@@ -38,17 +38,32 @@ export type Link = {
   openInNewTab?: boolean
 }
 
-export type HeroSecondary = {
-  _type: 'heroSecondary'
-  heading?: string
-  description?: string
-}
-
 export type SanityImageAssetReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
   [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+}
+
+export type Seo = {
+  _type: 'seo'
+  title?: string
+  description?: string
+  image?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
+  noIndex?: boolean
+}
+
+export type HeroSecondary = {
+  _type: 'heroSecondary'
+  heading?: string
+  description?: string
 }
 
 export type CallToAction = {
@@ -209,9 +224,17 @@ export type Page = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  name: string
+  title: string
   slug: Slug
   parent?: PageReference
+  coverImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
   pageBuilder?: Array<
     | ({
         _key: string
@@ -223,6 +246,7 @@ export type Page = {
         _key: string
       } & HeroSecondary)
   >
+  seo?: Seo
 }
 
 export type PersonReference = {
@@ -516,8 +540,9 @@ export type AllSanitySchemaTypes =
   | PageReference
   | PostReference
   | Link
-  | HeroSecondary
   | SanityImageAssetReference
+  | Seo
+  | HeroSecondary
   | CallToAction
   | InfoSection
   | BlockContentTextOnly

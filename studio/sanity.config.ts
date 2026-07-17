@@ -103,7 +103,7 @@ export default defineConfig({
           }),
           page: defineLocations({
             select: {
-              name: 'name',
+              title: 'title',
               slug: 'slug.current',
               parentSlug: 'parent.slug.current',
               grandparentSlug: 'parent.parent.slug.current',
@@ -122,7 +122,7 @@ export default defineConfig({
               return {
                 locations: [
                   {
-                    title: doc?.name || 'Untitled',
+                    title: doc?.title || 'Untitled',
                     href: resolveHref('page', path)!,
                   },
                 ],
