@@ -120,7 +120,7 @@ const archivePostsFilter = /* groq */ `
 `
 
 export const archivePostsQuery = defineQuery(`
-  *[${archivePostsFilter}] | order(date desc, _updatedAt desc)[$offset...$offset + $limit] {
+  *[${archivePostsFilter}] | order(date desc, _updatedAt desc) [$offset...$end] {
     ${postFields}
   }
 `)

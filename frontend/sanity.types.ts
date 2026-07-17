@@ -888,6 +888,43 @@ export type PostCategoriesQueryResult = Array<{
 }>
 
 // Source: sanity/lib/queries.ts
+// Variable: archivePostsQuery
+// Query: *[  _type == "post" &&  defined(slug.current) &&  ($search == "" || title match $search + "*" || excerpt match $search + "*") &&  ($category == "" || $category in categories[]->slug.current)] | order(date desc, _updatedAt desc) [$offset...$end] {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  "categories": categories[]->{_id, title, "slug": slug.current},  }
+export type ArchivePostsQueryResult = Array<{
+  _id: string
+  status: 'draft' | 'published'
+  title: string
+  slug: string
+  excerpt: string | null
+  coverImage: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  } | null
+  date: string
+  author: {
+    firstName: string
+    lastName: string
+    picture: {
+      asset?: SanityImageAssetReference
+      media?: unknown
+      hotspot?: SanityImageHotspot
+      crop?: SanityImageCrop
+      alt?: string
+      _type: 'image'
+    }
+  } | null
+  categories: Array<{
+    _id: string
+    title: string
+    slug: string
+  }> | null
+}>
+
+// Source: sanity/lib/queries.ts
 // Variable: archivePostsCountQuery
 // Query: count(*[  _type == "post" &&  defined(slug.current) &&  ($search == "" || title match $search + "*" || excerpt match $search + "*") &&  ($category == "" || $category in categories[]->slug.current)])
 export type ArchivePostsCountQueryResult = number
@@ -906,6 +943,7 @@ declare module '@sanity/client' {
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
     '*[_type == "postSettings"][0]': PostSettingsQueryResult
     '\n  *[_type == "postCategory"] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    description\n  }\n': PostCategoriesQueryResult
+    '\n  *[\n  _type == "post" &&\n  defined(slug.current) &&\n  ($search == "" || title match $search + "*" || excerpt match $search + "*") &&\n  ($category == "" || $category in categories[]->slug.current)\n] | order(date desc, _updatedAt desc) [$offset...$end] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n  "categories": categories[]->{_id, title, "slug": slug.current},\n\n  }\n': ArchivePostsQueryResult
     '\n  count(*[\n  _type == "post" &&\n  defined(slug.current) &&\n  ($search == "" || title match $search + "*" || excerpt match $search + "*") &&\n  ($category == "" || $category in categories[]->slug.current)\n])\n': ArchivePostsCountQueryResult
   }
 }
