@@ -1,4 +1,5 @@
 import {staff} from './documents/staff'
+import {department} from './documents/department'
 import {page} from './documents/page'
 import {post} from './documents/post'
 import {callToAction} from './objects/callToAction'
@@ -18,6 +19,7 @@ export const schemaTypes = [
   page,
   post,
   staff,
+  department,
   // Objects
   button,
   blockContent,

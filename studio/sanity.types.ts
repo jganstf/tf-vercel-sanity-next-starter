@@ -203,11 +203,11 @@ export type Page = {
   >
 }
 
-export type PersonReference = {
+export type StaffReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'person'
+  [internalGroqTypeReferenceTo]?: 'staff'
 }
 
 export type Post = {
@@ -229,17 +229,25 @@ export type Post = {
     _type: 'image'
   }
   date?: string
-  author?: PersonReference
+  author?: StaffReference
 }
 
-export type Person = {
+export type DepartmentReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'department'
+}
+
+export type Staff = {
   _id: string
-  _type: 'person'
+  _type: 'staff'
   _createdAt: string
   _updatedAt: string
   _rev: string
   firstName: string
   lastName: string
+  slug: Slug
   picture: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -248,6 +256,19 @@ export type Person = {
     alt?: string
     _type: 'image'
   }
+  department: DepartmentReference
+  jobTitle?: string
+  bio?: string
+}
+
+export type Department = {
+  _id: string
+  _type: 'department'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  slug: Slug
 }
 
 export type Slug = {
@@ -504,9 +525,11 @@ export type AllSanitySchemaTypes =
   | SanityImageCrop
   | SanityImageHotspot
   | Page
-  | PersonReference
+  | StaffReference
   | Post
-  | Person
+  | DepartmentReference
+  | Staff
+  | Department
   | Slug
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
