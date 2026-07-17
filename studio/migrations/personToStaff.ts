@@ -9,8 +9,19 @@ import {defineMigration, at, set} from 'sanity/migrate'
  *
  * Reference integrity: `post.author` references store only a document `_id`,
  * and this migration does not change any document `_id` — only `_type` — so
- * existing `post.author` references continue to resolve correctly after this
- * migration runs, now pointing at documents of type `staff` instead of `person`.
+ * existing `post.author` references would continue to resolve correctly
+ * after this migration runs, now pointing at documents of type `staff`
+ * instead of `person`, assuming the `_type` patch is accepted — see the
+ * warning below.
+ *
+ * IMPORTANT: Sanity's content lake may reject in-place `_type` patches
+ * (`_type` is typically treated as immutable). Before running this against
+ * a real dataset, first validate with `--dry-run` against a scratch/staging
+ * dataset that this patch is actually accepted. If it's rejected, the
+ * correct fallback is a create-new-document-as-`staff` + delete-old-
+ * `person`-document migration instead of an in-place `_type` patch — and
+ * any code changes needed to preserve the original `_id` (so `post.author`
+ * references keep resolving) if you switch strategies.
  *
  * To run this migration against a real dataset (do this manually, not as
  * part of any automated process):

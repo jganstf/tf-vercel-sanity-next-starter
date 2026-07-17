@@ -11,7 +11,6 @@ const StaffCard = ({member}: {member: AllStaffQueryResult[number]}) => {
     <Link
       href={`/staff/${slug}`}
       data-sanity={dataAttr({id: _id, type: 'staff', path: 'firstName'}).toString()}
-      key={_id}
       className="border border-gray-200 rounded-sm p-6 bg-gray-50 flex flex-col gap-4 transition-colors hover:bg-white"
     >
       {picture?.asset?._ref && (

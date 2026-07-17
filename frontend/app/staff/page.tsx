@@ -5,11 +5,16 @@ import {PortableText} from '@portabletext/react'
 import {StaffGrid} from '@/app/components/Staff'
 import {sanityFetch} from '@/sanity/lib/live'
 import {allDepartmentsQuery, allStaffQuery, staffSettingsQuery} from '@/sanity/lib/queries'
+import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 
 export async function generateMetadata(): Promise<Metadata> {
   const {data: staffSettings} = await sanityFetch({query: staffSettingsQuery, stega: false})
+  const ogImage = resolveOpenGraphImage(staffSettings?.ogImage)
   return {
     title: staffSettings?.title || 'Our Staff',
+    openGraph: {
+      images: ogImage ? [ogImage] : [],
+    },
   } satisfies Metadata
 }
 
