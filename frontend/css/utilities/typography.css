@@ -1,0 +1,7 @@
+@utility text-heading-common {
+    @apply font-bold;
+}
+
+@utility text-h1 {
+    @apply text-4xl text-heading-common;
+}

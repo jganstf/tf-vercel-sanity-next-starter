@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+@import './base/__index__.css';
+/* @import './components/__index__.css'; */
+@import './utilities/__index__.css';
+/* @import './variants/__index__.css'; */
+
 @plugin "@tailwindcss/typography";
 
 @layer base {
