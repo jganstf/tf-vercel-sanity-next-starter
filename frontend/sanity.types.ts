@@ -127,6 +127,53 @@ export type Button = {
   link?: Link
 }
 
+export type StaffSettings = {
+  _id: string
+  _type: 'staffSettings'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  intro?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal'
+    listItem?: never
+    markDefs?: null
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -167,22 +214,6 @@ export type Settings = {
   }
 }
 
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
 export type Page = {
   _id: string
   _type: 'page'
@@ -203,11 +234,11 @@ export type Page = {
   >
 }
 
-export type PersonReference = {
+export type StaffReference = {
   _ref: string
   _type: 'reference'
   _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'person'
+  [internalGroqTypeReferenceTo]?: 'staff'
 }
 
 export type Post = {
@@ -229,17 +260,25 @@ export type Post = {
     _type: 'image'
   }
   date?: string
-  author?: PersonReference
+  author?: StaffReference
 }
 
-export type Person = {
+export type DepartmentReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'department'
+}
+
+export type Staff = {
   _id: string
-  _type: 'person'
+  _type: 'staff'
   _createdAt: string
   _updatedAt: string
   _rev: string
   firstName: string
   lastName: string
+  slug: Slug
   picture: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -248,6 +287,19 @@ export type Person = {
     alt?: string
     _type: 'image'
   }
+  department: DepartmentReference
+  jobTitle?: string
+  bio?: string
+}
+
+export type Department = {
+  _id: string
+  _type: 'department'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  slug: Slug
 }
 
 export type Slug = {
@@ -500,13 +552,16 @@ export type AllSanitySchemaTypes =
   | BlockContentTextOnly
   | BlockContent
   | Button
-  | Settings
+  | StaffSettings
   | SanityImageCrop
   | SanityImageHotspot
+  | Settings
   | Page
-  | PersonReference
+  | StaffReference
   | Post
-  | Person
+  | DepartmentReference
+  | Staff
+  | Department
   | Slug
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
@@ -813,6 +868,105 @@ export type PagesSlugsResult = Array<{
   slug: string
 }>
 
+// Source: sanity/lib/queries.ts
+// Variable: allStaffQuery
+// Query: *[_type == "staff" && defined(slug.current) && (!defined($department) || department->slug.current == $department)] | order(lastName asc, firstName asc) {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  firstName,  lastName,  "slug": slug.current,  picture,  jobTitle,  bio,  "department": department->{title, "slug": slug.current},  }
+export type AllStaffQueryResult = Array<{
+  _id: string
+  status: 'draft' | 'published'
+  firstName: string
+  lastName: string
+  slug: string
+  picture: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
+  jobTitle: string | null
+  bio: string | null
+  department: {
+    title: string
+    slug: string
+  }
+}>
+
+// Source: sanity/lib/queries.ts
+// Variable: staffQuery
+// Query: *[_type == "staff" && slug.current == $slug] [0] {      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  firstName,  lastName,  "slug": slug.current,  picture,  jobTitle,  bio,  "department": department->{title, "slug": slug.current},  }
+export type StaffQueryResult = {
+  _id: string
+  status: 'draft' | 'published'
+  firstName: string
+  lastName: string
+  slug: string
+  picture: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
+  jobTitle: string | null
+  bio: string | null
+  department: {
+    title: string
+    slug: string
+  }
+} | null
+
+// Source: sanity/lib/queries.ts
+// Variable: staffSlugs
+// Query: *[_type == "staff" && defined(slug.current)]  {"slug": slug.current}
+export type StaffSlugsResult = Array<{
+  slug: string
+}>
+
+// Source: sanity/lib/queries.ts
+// Variable: allDepartmentsQuery
+// Query: *[_type == "department" && defined(slug.current)] | order(title asc) {    title,    "slug": slug.current,  }
+export type AllDepartmentsQueryResult = Array<{
+  title: string
+  slug: string
+}>
+
+// Source: sanity/lib/queries.ts
+// Variable: staffSettingsQuery
+// Query: *[_type == "staffSettings"][0]
+export type StaffSettingsQueryResult = {
+  _id: string
+  _type: 'staffSettings'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  intro?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal'
+    listItem?: never
+    markDefs?: null
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
+} | null
+
 // Query TypeMap
 import '@sanity/client'
 declare module '@sanity/client' {
@@ -825,5 +979,10 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
+    '\n  *[_type == "staff" && defined(slug.current) && (!defined($department) || department->slug.current == $department)] | order(lastName asc, firstName asc) {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  firstName,\n  lastName,\n  "slug": slug.current,\n  picture,\n  jobTitle,\n  bio,\n  "department": department->{title, "slug": slug.current},\n\n  }\n': AllStaffQueryResult
+    '\n  *[_type == "staff" && slug.current == $slug] [0] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  firstName,\n  lastName,\n  "slug": slug.current,\n  picture,\n  jobTitle,\n  bio,\n  "department": department->{title, "slug": slug.current},\n\n  }\n': StaffQueryResult
+    '\n  *[_type == "staff" && defined(slug.current)]\n  {"slug": slug.current}\n': StaffSlugsResult
+    '\n  *[_type == "department" && defined(slug.current)] | order(title asc) {\n    title,\n    "slug": slug.current,\n  }\n': AllDepartmentsQueryResult
+    '*[_type == "staffSettings"][0]': StaffSettingsQueryResult
   }
 }

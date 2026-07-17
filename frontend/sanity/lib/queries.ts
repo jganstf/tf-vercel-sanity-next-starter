@@ -99,3 +99,41 @@ export const pagesSlugs = defineQuery(`
   *[_type == "page" && defined(slug.current)]
   {"slug": slug.current}
 `)
+
+const staffFields = /* groq */ `
+  _id,
+  "status": select(_originalId in path("drafts.**") => "draft", "published"),
+  firstName,
+  lastName,
+  "slug": slug.current,
+  picture,
+  jobTitle,
+  bio,
+  "department": department->{title, "slug": slug.current},
+`
+
+export const allStaffQuery = defineQuery(`
+  *[_type == "staff" && defined(slug.current) && (!defined($department) || department->slug.current == $department)] | order(lastName asc, firstName asc) {
+    ${staffFields}
+  }
+`)
+
+export const staffQuery = defineQuery(`
+  *[_type == "staff" && slug.current == $slug] [0] {
+    ${staffFields}
+  }
+`)
+
+export const staffSlugs = defineQuery(`
+  *[_type == "staff" && defined(slug.current)]
+  {"slug": slug.current}
+`)
+
+export const allDepartmentsQuery = defineQuery(`
+  *[_type == "department" && defined(slug.current)] | order(title asc) {
+    title,
+    "slug": slug.current,
+  }
+`)
+
+export const staffSettingsQuery = defineQuery(`*[_type == "staffSettings"][0]`)
