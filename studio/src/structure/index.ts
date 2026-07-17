@@ -1,4 +1,4 @@
-import {CogIcon} from '@sanity/icons'
+import {CogIcon, UsersIcon} from '@sanity/icons'
 import type {StructureBuilder, StructureResolver} from 'sanity/structure'
 import pluralize from 'pluralize-esm'
 
@@ -8,14 +8,20 @@ import pluralize from 'pluralize-esm'
  * Learn more: https://www.sanity.io/docs/structure-builder-introduction
  */
 
-const DISABLED_TYPES = ['settings', 'assist.instruction.context']
+const DISABLED_TYPES = [
+  'settings',
+  'assist.instruction.context',
+  'staff',
+  'department',
+  'staffSettings',
+]
 
 export const structure: StructureResolver = (S: StructureBuilder) =>
   S.list()
     .title('Website Content')
     .items([
       ...S.documentTypeListItems()
-        // Remove the "assist.instruction.context" and "settings" content  from the list of content types
+        // Remove content types that get their own dedicated structure nodes below
         .filter((listItem: any) => !DISABLED_TYPES.includes(listItem.getId()))
         // Pluralize the title of each document type.  This is not required but just an option to consider.
         .map((listItem) => {
@@ -26,4 +32,20 @@ export const structure: StructureResolver = (S: StructureBuilder) =>
         .title('Site Settings')
         .child(S.document().schemaType('settings').documentId('siteSettings'))
         .icon(CogIcon),
+      // Staff: a dedicated nested node grouping staff members, departments, and staff archive settings.
+      S.listItem()
+        .title('Staff')
+        .icon(UsersIcon)
+        .child(
+          S.list()
+            .title('Staff')
+            .items([
+              S.documentTypeListItem('staff').title('Staff Members'),
+              S.documentTypeListItem('department').title('Departments'),
+              S.listItem()
+                .title('Staff Settings')
+                .child(S.document().schemaType('staffSettings').documentId('staffSettings'))
+                .icon(CogIcon),
+            ]),
+        ),
     ])
