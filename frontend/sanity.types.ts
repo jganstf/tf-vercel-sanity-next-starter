@@ -15,27 +15,6 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: ../sanity.schema.json
-export type SanityImageAssetReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
-}
-
-export type Seo = {
-  _type: 'seo'
-  metaTitle?: string
-  metaDescription?: string
-  ogImage?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-}
-
 export type PageReference = {
   _ref: string
   _type: 'reference'
@@ -57,6 +36,13 @@ export type Link = {
   page?: PageReference
   post?: PostReference
   openInNewTab?: boolean
+}
+
+export type SanityImageAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
 }
 
 export type CallToAction = {
@@ -141,85 +127,6 @@ export type Button = {
   link?: Link
 }
 
-export type FaqCategoryReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'faqCategory'
-}
-
-export type Faq = {
-  _id: string
-  _type: 'faq'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  question: string
-  slug: Slug
-  category: FaqCategoryReference
-  shortAnswer: string
-  longAnswer?: BlockContent
-  seo?: Seo
-}
-
-export type FaqCategory = {
-  _id: string
-  _type: 'faqCategory'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: string
-  slug: Slug
-  parent?: FaqCategoryReference
-  description?: string
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
-}
-
-export type FaqSettings = {
-  _id: string
-  _type: 'faqSettings'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title?: string
-  intro?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal'
-    listItem?: never
-    markDefs?: null
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
-  defaultSeo?: Seo
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -258,6 +165,22 @@ export type Settings = {
     metadataBase?: string
     _type: 'image'
   }
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
 }
 
 export type Page = {
@@ -325,6 +248,12 @@ export type Person = {
     alt?: string
     _type: 'image'
   }
+}
+
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
 }
 
 export type SanityAssistInstructionTask = {
@@ -562,28 +491,23 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
-  | SanityImageAssetReference
-  | Seo
   | PageReference
   | PostReference
   | Link
+  | SanityImageAssetReference
   | CallToAction
   | InfoSection
   | BlockContentTextOnly
   | BlockContent
   | Button
-  | FaqCategoryReference
-  | Faq
-  | FaqCategory
-  | Slug
-  | FaqSettings
+  | Settings
   | SanityImageCrop
   | SanityImageHotspot
-  | Settings
   | Page
   | PersonReference
   | Post
   | Person
+  | Slug
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations
@@ -889,68 +813,6 @@ export type PagesSlugsResult = Array<{
   slug: string
 }>
 
-// Source: sanity/lib/queries.ts
-// Variable: faqSettingsQuery
-// Query: *[_type == "faqSettings"][0]{  title,  intro,  defaultSeo,}
-export type FaqSettingsQueryResult = {
-  title: string | null
-  intro: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal'
-    listItem?: never
-    markDefs?: null
-    level?: number
-    _type: 'block'
-    _key: string
-  }> | null
-  defaultSeo: Seo | null
-} | null
-
-// Source: sanity/lib/queries.ts
-// Variable: faqCategoryTreeQuery
-// Query: *[_type == "faqCategory" && defined(slug.current)]{    _id,    title,      "pathSegments": [    parent->parent->parent->parent->slug.current,    parent->parent->parent->slug.current,    parent->parent->slug.current,    parent->slug.current,    slug.current  ][defined(@)]  }
-export type FaqCategoryTreeQueryResult = Array<{
-  _id: string
-  title: string
-  pathSegments: Array<string | null>
-}>
-
-// Source: sanity/lib/queries.ts
-// Variable: faqPagesSlugs
-// Query: *[_type == "faq" && defined(slug.current) && defined(category->slug.current)]{    "path": [      ...category->{  "pathSegments": [    parent->parent->parent->parent->slug.current,    parent->parent->parent->slug.current,    parent->parent->slug.current,    parent->slug.current,    slug.current  ][defined(@)]}.pathSegments,      slug.current    ]  }
-export type FaqPagesSlugsResult = Array<{
-  path: Array<string | null>
-}>
-
-// Source: sanity/lib/queries.ts
-// Variable: faqQuery
-// Query: *[_type == "faq" && slug.current == $slug && category->slug.current == $categorySlug][0]{    _id,    question,    shortAnswer,    longAnswer,    seo,    "category": category->{      title,        "pathSegments": [    parent->parent->parent->parent->slug.current,    parent->parent->parent->slug.current,    parent->parent->slug.current,    parent->slug.current,    slug.current  ][defined(@)]    },  }
-export type FaqQueryResult = {
-  _id: string
-  question: string
-  shortAnswer: string
-  longAnswer: BlockContent | null
-  seo: Seo | null
-  category: {
-    title: string
-    pathSegments: Array<string | null>
-  }
-} | null
-
-// Source: sanity/lib/queries.ts
-// Variable: faqsByCategoryQuery
-// Query: *[_type == "faq" && category->slug.current == $categorySlug] | order(question asc){    question,    shortAnswer,    "slug": slug.current,  }
-export type FaqsByCategoryQueryResult = Array<{
-  question: string
-  shortAnswer: string
-  slug: string
-}>
-
 // Query TypeMap
 import '@sanity/client'
 declare module '@sanity/client' {
@@ -963,10 +825,5 @@ declare module '@sanity/client' {
     '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
     '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
-    '*[_type == "faqSettings"][0]{\n  title,\n  intro,\n  defaultSeo,\n}': FaqSettingsQueryResult
-    '\n  *[_type == "faqCategory" && defined(slug.current)]{\n    _id,\n    title,\n    \n  "pathSegments": [\n    parent->parent->parent->parent->slug.current,\n    parent->parent->parent->slug.current,\n    parent->parent->slug.current,\n    parent->slug.current,\n    slug.current\n  ][defined(@)]\n\n  }\n': FaqCategoryTreeQueryResult
-    '\n  *[_type == "faq" && defined(slug.current) && defined(category->slug.current)]{\n    "path": [\n      ...category->{\n  "pathSegments": [\n    parent->parent->parent->parent->slug.current,\n    parent->parent->parent->slug.current,\n    parent->parent->slug.current,\n    parent->slug.current,\n    slug.current\n  ][defined(@)]\n}.pathSegments,\n      slug.current\n    ]\n  }\n': FaqPagesSlugsResult
-    '\n  *[_type == "faq" && slug.current == $slug && category->slug.current == $categorySlug][0]{\n    _id,\n    question,\n    shortAnswer,\n    longAnswer,\n    seo,\n    "category": category->{\n      title,\n      \n  "pathSegments": [\n    parent->parent->parent->parent->slug.current,\n    parent->parent->parent->slug.current,\n    parent->parent->slug.current,\n    parent->slug.current,\n    slug.current\n  ][defined(@)]\n\n    },\n  }\n': FaqQueryResult
-    '\n  *[_type == "faq" && category->slug.current == $categorySlug] | order(question asc){\n    question,\n    shortAnswer,\n    "slug": slug.current,\n  }\n': FaqsByCategoryQueryResult
   }
 }
