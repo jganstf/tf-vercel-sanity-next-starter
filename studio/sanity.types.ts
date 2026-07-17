@@ -144,6 +144,16 @@ export type Slug = {
   source?: string
 }
 
+export type PostSettings = {
+  _id: string
+  _type: 'postSettings'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  postsPerPage: number
+  loadMoreMode: 'button' | 'infiniteScroll'
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -525,6 +535,7 @@ export type AllSanitySchemaTypes =
   | Button
   | PostCategory
   | Slug
+  | PostSettings
   | Settings
   | SanityImageCrop
   | SanityImageHotspot
