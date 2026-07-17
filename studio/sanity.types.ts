@@ -38,6 +38,12 @@ export type Link = {
   openInNewTab?: boolean
 }
 
+export type HeroSecondary = {
+  _type: 'heroSecondary'
+  heading?: string
+  description?: string
+}
+
 export type SanityImageAssetReference = {
   _ref: string
   _type: 'reference'
@@ -127,6 +133,20 @@ export type Button = {
   link?: Link
 }
 
+export type Footer = {
+  _id: string
+  _type: 'footer'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  legalMenu?: Array<{
+    label: string
+    link: Link
+    _type: 'legalMenuItem'
+    _key: string
+  }>
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -191,8 +211,7 @@ export type Page = {
   _rev: string
   name: string
   slug: Slug
-  heading: string
-  subheading?: string
+  parent?: PageReference
   pageBuilder?: Array<
     | ({
         _key: string
@@ -200,6 +219,9 @@ export type Page = {
     | ({
         _key: string
       } & InfoSection)
+    | ({
+        _key: string
+      } & HeroSecondary)
   >
 }
 
@@ -494,12 +516,14 @@ export type AllSanitySchemaTypes =
   | PageReference
   | PostReference
   | Link
+  | HeroSecondary
   | SanityImageAssetReference
   | CallToAction
   | InfoSection
   | BlockContentTextOnly
   | BlockContent
   | Button
+  | Footer
   | Settings
   | SanityImageCrop
   | SanityImageHotspot

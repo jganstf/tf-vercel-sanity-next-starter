@@ -3,6 +3,7 @@ import {page} from './documents/page'
 import {post} from './documents/post'
 import {callToAction} from './objects/callToAction'
 import {infoSection} from './objects/infoSection'
+import {heroSecondary} from './objects/heroSecondary'
 import {settings} from './singletons/settings'
 import {footer} from './singletons/footer'
 import {link} from './objects/link'
@@ -26,5 +27,6 @@ export const schemaTypes = [
   blockContentTextOnly,
   infoSection,
   callToAction,
+  heroSecondary,
   link,
 ]

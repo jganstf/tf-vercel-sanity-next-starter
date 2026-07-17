@@ -1,10 +1,18 @@
+import {HeroSecondary as HeroSecondaryBlock} from '@/sanity.types'
 
-export default function HeroSecondary() {
+type HeroSecondaryProps = {
+  block?: HeroSecondaryBlock
+  index?: number
+  pageId?: string
+  pageType?: string
+}
+
+export default function HeroSecondary({block}: HeroSecondaryProps) {
   return (
     <section className="px-global-margin py-md overflow-hidden">
       <div className="tf-max-w">
-        <h2 className="text-h1">Secondary Hero Section</h2>
-        <p>This is a secondary hero section for the starter template.</p>
+        {block?.heading && <h2 className="text-h1">{block.heading}</h2>}
+        {block?.description && <p>{block.description}</p>}
       </div>
     </section>
   )

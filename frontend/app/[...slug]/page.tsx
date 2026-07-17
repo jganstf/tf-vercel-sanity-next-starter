@@ -8,7 +8,7 @@ import {GetPageQueryResult} from '@/sanity.types'
 import {PageOnboarding} from '@/components/Onboarding'
 
 /**
- * Generate the static params for the page.
+ * Generate the static params for the page, including nested pages.
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-static-params
  */
 export async function generateStaticParams() {
@@ -18,31 +18,32 @@ export async function generateStaticParams() {
     perspective: 'published',
     stega: false,
   })
-  return data
+  return data.filter((page) => page.path).map((page) => ({slug: page.path!.split('/')}))
 }
 
 /**
  * Generate metadata for the page.
  * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
  */
-export async function generateMetadata(props: PageProps<'/[slug]'>): Promise<Metadata> {
+export async function generateMetadata(props: PageProps<'/[...slug]'>): Promise<Metadata> {
   const params = await props.params
   const {data: page} = await sanityFetch({
     query: getPageQuery,
-    params,
+    params: {slug: params.slug.join('/')},
     // Metadata should never contain stega
     stega: false,
   })
 
   return {
     title: page?.name,
-    description: page?.heading,
   } satisfies Metadata
 }
 
-export default async function Page(props: PageProps<'/[slug]'>) {
+export default async function Page(props: PageProps<'/[...slug]'>) {
   const params = await props.params
-  const [{data: page}] = await Promise.all([sanityFetch({query: getPageQuery, params})])
+  const [{data: page}] = await Promise.all([
+    sanityFetch({query: getPageQuery, params: {slug: params.slug.join('/')}}),
+  ])
 
   if (!page?._id) {
     return (
@@ -55,16 +56,13 @@ export default async function Page(props: PageProps<'/[slug]'>) {
   return (
     <div className="my-12 lg:my-24">
       <Head>
-        <title>{page.heading}</title>
+        <title>{page.name}</title>
       </Head>
       <div className="">
         <div className="container">
           <div className="pb-6 border-b border-gray-100">
             <div className="max-w-3xl">
-              <h1 className="text-4xl text-gray-900 sm:text-5xl lg:text-7xl">{page.heading}</h1>
-              <p className="mt-4 text-base lg:text-lg leading-relaxed text-gray-600 uppercase font-light">
-                {page.subheading}
-              </p>
+              <h1 className="text-4xl text-gray-900 sm:text-5xl lg:text-7xl">{page.name}</h1>
             </div>
           </div>
         </div>

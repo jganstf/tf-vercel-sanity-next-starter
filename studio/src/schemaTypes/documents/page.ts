@@ -23,6 +23,7 @@ export const page = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      description: 'The URL segment for this page, relative to its parent page (if any).',
       validation: (Rule) => Rule.required(),
       options: {
         source: 'name',
@@ -30,21 +31,26 @@ export const page = defineType({
       },
     }),
     defineField({
-      name: 'heading',
-      title: 'Heading',
-      type: 'string',
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'subheading',
-      title: 'Subheading',
-      type: 'string',
+      name: 'parent',
+      title: 'Parent page',
+      description: 'Nest this page under another page to build a nested URL, e.g. /parent/child.',
+      type: 'reference',
+      to: [{type: 'page'}],
+      options: {
+        filter: ({document}) => ({
+          filter: '_id != $id && _id != $draftId',
+          params: {
+            id: (document?._id as string)?.replace(/^drafts\./, ''),
+            draftId: `drafts.${(document?._id as string)?.replace(/^drafts\./, '')}`,
+          },
+        }),
+      },
     }),
     defineField({
       name: 'pageBuilder',
       title: 'Page builder',
       type: 'array',
-      of: [{type: 'callToAction'}, {type: 'infoSection'}],
+      of: [{type: 'callToAction'}, {type: 'infoSection'}, {type: 'heroSecondary'}],
       options: {
         insertMenu: {
           // Configure the "Add Item" menu to display a thumbnail preview of the content type. https://www.sanity.io/docs/studio/array-type#efb1fe03459d
@@ -59,4 +65,16 @@ export const page = defineType({
       },
     }),
   ],
+  preview: {
+    select: {
+      title: 'name',
+      parentName: 'parent.name',
+    },
+    prepare({title, parentName}) {
+      return {
+        title,
+        subtitle: parentName ? `Nested under ${parentName}` : undefined,
+      }
+    },
+  },
 })

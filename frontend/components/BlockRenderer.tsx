@@ -2,6 +2,7 @@ import React from 'react'
 
 import Cta from '@/components/Cta'
 import Info from '@/components/InfoSection'
+import HeroSecondary from '@/components/sections/hero/HeroSecondary/HeroSecondary'
 import {dataAttr} from '@/sanity/lib/utils'
 import {PageBuilderSection} from '@/sanity/lib/types'
 
@@ -19,6 +20,7 @@ type BlocksType = {
 const Blocks = {
   callToAction: Cta,
   infoSection: Info,
+  heroSecondary: HeroSecondary,
 } as BlocksType
 
 /**

@@ -13,9 +13,26 @@ const postFields = /* groq */ `
   "author": author->{firstName, lastName, picture},
 `
 
+// Builds the full nested URL path for a page by walking up to 4 levels of `parent` references,
+// e.g. a page nested two levels deep resolves to "grandparent/parent/child".
+const pagePathExpr = /* groq */ `
+  array::join(
+    [
+      parent->parent->parent->parent->slug.current,
+      parent->parent->parent->slug.current,
+      parent->parent->slug.current,
+      parent->slug.current,
+      slug.current
+    ][defined(@)],
+    "/"
+  )
+`
+
+const pagePath = /* groq */ `"path": ${pagePathExpr}`
+
 const linkReference = /* groq */ `
   _type == "link" => {
-    "page": page->slug.current,
+    "page": page->{${pagePath}}.path,
     "post": post->slug.current
   }
 `
@@ -37,13 +54,13 @@ export const footerQuery = defineQuery(`
 `)
 
 export const getPageQuery = defineQuery(`
-  *[_type == 'page' && slug.current == $slug][0]{
+  *[_type == 'page']{
     _id,
     _type,
     name,
     slug,
-    heading,
-    subheading,
+    parent,
+    ${pagePath},
     "pageBuilder": pageBuilder[]{
       ...,
       _type == "callToAction" => {
@@ -63,12 +80,12 @@ export const getPageQuery = defineQuery(`
         }
       },
     },
-  }
+  }[path == $slug][0]
 `)
 
 export const sitemapData = defineQuery(`
   *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {
-    "slug": slug.current,
+    "slug": select(_type == "page" => ${pagePathExpr}, slug.current),
     _type,
     _updatedAt,
   }
@@ -106,5 +123,5 @@ export const postPagesSlugs = defineQuery(`
 
 export const pagesSlugs = defineQuery(`
   *[_type == "page" && defined(slug.current)]
-  {"slug": slug.current}
+  {${pagePath}}
 `)

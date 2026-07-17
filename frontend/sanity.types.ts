@@ -41,7 +41,7 @@ export type Link = {
 export type HeroSecondary = {
   _type: 'heroSecondary'
   heading?: string
-  text?: string
+  description?: string
 }
 
 export type SanityImageAssetReference = {
@@ -211,6 +211,7 @@ export type Page = {
   _rev: string
   name: string
   slug: Slug
+  parent?: PageReference
   pageBuilder?: Array<
     | ({
         _key: string
@@ -598,7 +599,7 @@ export type SettingsQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: footerQuery
-// Query: *[_type == "footer"][0]{    legalMenu[]{      label,        link {      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }      }    }  }
+// Query: *[_type == "footer"][0]{    legalMenu[]{      label,        link {      ...,        _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }      }    }  }
 export type FooterQueryResult = {
   legalMenu: Array<{
     label: string
@@ -615,14 +616,14 @@ export type FooterQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: getPageQuery
-// Query: *[_type == 'page' && slug.current == $slug][0]{    _id,    _type,    name,    slug,    heading,    subheading,    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {        ...,        button {          ...,            link {      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }      }        }      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }          }        }      },    },  }
+// Query: *[_type == 'page']{    _id,    _type,    name,    slug,    parent,    "path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  ),    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {        ...,        button {          ...,            link {      ...,        _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }      }        }      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }          }        }      },    },  }[path == $slug][0]
 export type GetPageQueryResult = {
   _id: string
   _type: 'page'
   name: string
   slug: Slug
-  heading: null
-  subheading: null
+  parent: PageReference | null
+  path: string | null
   pageBuilder: Array<
     | {
         _key: string
@@ -656,7 +657,7 @@ export type GetPageQueryResult = {
         _key: string
         _type: 'heroSecondary'
         heading?: string
-        text?: string
+        description?: string
       }
     | {
         _key: string
@@ -702,10 +703,10 @@ export type GetPageQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: sitemapData
-// Query: *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {    "slug": slug.current,    _type,    _updatedAt,  }
+// Query: *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {    "slug": select(_type == "page" =>   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  ), slug.current),    _type,    _updatedAt,  }
 export type SitemapDataResult = Array<
   | {
-      slug: string
+      slug: string | null
       _type: 'page'
       _updatedAt: string
     }
@@ -782,7 +783,7 @@ export type MorePostsQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: postQuery
-// Query: *[_type == "post" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->slug.current,    "post": post->slug.current  }    }  },      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
+// Query: *[_type == "post" && slug.current == $slug] [0] {    content[]{    ...,    markDefs[]{      ...,        _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }    }  },      _id,  "status": select(_originalId in path("drafts.**") => "draft", "published"),  "title": coalesce(title, "Untitled"),  "slug": slug.current,  excerpt,  coverImage,  "date": coalesce(date, _updatedAt),  "author": author->{firstName, lastName, picture},  }
 export type PostQueryResult = {
   content: Array<
     | {
@@ -854,9 +855,9 @@ export type PostPagesSlugsResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: pagesSlugs
-// Query: *[_type == "page" && defined(slug.current)]  {"slug": slug.current}
+// Query: *[_type == "page" && defined(slug.current)]  {"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}
 export type PagesSlugsResult = Array<{
-  slug: string
+  path: string | null
 }>
 
 // Query TypeMap
@@ -864,13 +865,13 @@ import '@sanity/client'
 declare module '@sanity/client' {
   interface SanityQueries {
     '*[_type == "settings"][0]': SettingsQueryResult
-    '\n  *[_type == "footer"][0]{\n    legalMenu[]{\n      label,\n      \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n\n    }\n  }\n': FooterQueryResult
-    '\n  *[_type == \'page\' && slug.current == $slug][0]{\n    _id,\n    _type,\n    name,\n    slug,\n    heading,\n    subheading,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }\n': GetPageQueryResult
-    '\n  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {\n    "slug": slug.current,\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
+    '\n  *[_type == "footer"][0]{\n    legalMenu[]{\n      label,\n      \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n      }\n\n    }\n  }\n': FooterQueryResult
+    '\n  *[_type == \'page\']{\n    _id,\n    _type,\n    name,\n    slug,\n    parent,\n    "path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n,\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }[path == $slug][0]\n': GetPageQueryResult
+    '\n  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {\n    "slug": select(_type == "page" => \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n, slug.current),\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
     '\n  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': AllPostsQueryResult
     '\n  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': MorePostsQueryResult
-    '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->slug.current,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
+    '\n  *[_type == "post" && slug.current == $slug] [0] {\n    content[]{\n    ...,\n    markDefs[]{\n      ...,\n      \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n    }\n  },\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': PostQueryResult
     '\n  *[_type == "post" && defined(slug.current)]\n  {"slug": slug.current}\n': PostPagesSlugsResult
-    '\n  *[_type == "page" && defined(slug.current)]\n  {"slug": slug.current}\n': PagesSlugsResult
+    '\n  *[_type == "page" && defined(slug.current)]\n  {"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}\n': PagesSlugsResult
   }
 }
