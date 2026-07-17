@@ -13,7 +13,7 @@ This template includes a [Next.js](https://nextjs.org/) app with a [Sanity Studi
 - **Powerful Content Management:** Collaborate with team members in real-time, with fine-grained revision history.
 - **AI-powered Media Support:** Auto-generate alt text with [Sanity AI Assist](https://www.sanity.io/ai-assist).
 - **On-demand Publishing:** No waiting for rebuilds—new content is live instantly with Incremental Static Revalidation.
-- **Easy Media Management:** [Integrated Unsplash support](https://www.sanity.io/plugins/sanity-plugin-asset-source-unsplash) for seamless media handling.
+- **Easy Media Management:** [Integrated Unsplash support](https://www.sanity.io/plugins/sanity-plugin-asset-source-unsplash) for seamless media handling, plus a [media library](https://www.sanity.io/plugins/sanity-plugin-media) for browsing and managing uploaded assets in one place.
 
 ## Demo
 
