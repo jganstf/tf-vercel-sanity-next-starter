@@ -227,6 +227,13 @@ export type PersonReference = {
   [internalGroqTypeReferenceTo]?: 'person'
 }
 
+export type PostCategoryReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'postCategory'
+}
+
 export type Post = {
   _id: string
   _type: 'post'
@@ -247,6 +254,11 @@ export type Post = {
   }
   date?: string
   author?: PersonReference
+  categories?: Array<
+    {
+      _key: string
+    } & PostCategoryReference
+  >
 }
 
 export type Person = {
@@ -518,6 +530,7 @@ export type AllSanitySchemaTypes =
   | SanityImageHotspot
   | Page
   | PersonReference
+  | PostCategoryReference
   | Post
   | Person
   | SanityAssistInstructionTask
