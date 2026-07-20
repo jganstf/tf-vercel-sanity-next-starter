@@ -88,6 +88,7 @@ A mistake — a broken build, a wrong assumption, or a correction from the user 
 | [docs/editor-routing.md](docs/editor-routing.md) | How editor-driven pages resolve under a reserved URL prefix (Solutions, Scope) and how to add a new one |
 | [docs/content-preview.md](docs/content-preview.md) | Preview/sample content vs. Sanity content — CMS-backed components never invent defaults; empty blocks render nothing |
 | [docs/section-reveals.md](docs/section-reveals.md) | Shared reveal-on-scroll system — one tuning point, coverage, opt-outs, and safe extension rules |
+| [docs/media-management.md](docs/media-management.md) | Studio media library options — `sanity-plugin-media` (in use, free) vs. native Sanity Media Library (paid add-on) |
 | [docs/deferred-work.md](docs/deferred-work.md) | Known work intentionally deferred — what's parked, where, and what unblocks it |
 | [README.md](README.md) | Human-facing overview — getting started, scripts, project structure |
 
