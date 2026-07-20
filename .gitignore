@@ -33,3 +33,9 @@ next-env.d.ts
 # VS Code
 .vscode
 .env*
+
+**/.superpowers/
+**/.worktrees/
+**/agent-memory-local/
+**/*.local.*
+ 

@@ -1,4 +1,4 @@
-import './globals.css'
+import '../css/globals.css'
 
 import {SpeedInsights} from '@vercel/speed-insights/next'
 import type {Metadata} from 'next'
@@ -8,12 +8,13 @@ import {toPlainText} from 'next-sanity'
 import {VisualEditing} from 'next-sanity/visual-editing'
 import {Toaster} from 'sonner'
 
-import DraftModeToast from '@/app/components/DraftModeToast'
-import Footer from '@/app/components/Footer'
-import Header from '@/app/components/Header'
+import DraftModeToast from '@/components/DraftModeToast'
+import Footer from '@/components/layout/Footer'
+import Header from '@/components/layout/Header'
 import * as demo from '@/sanity/lib/demo'
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
-import {settingsQuery} from '@/sanity/lib/queries'
+import {footerQuery, settingsQuery} from '@/sanity/lib/queries'
+import {DereferencedLegalMenuItem} from '@/sanity/lib/types'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import {handleError} from '@/app/client-utils'
 
@@ -67,11 +68,13 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export default async function RootLayout({children}: LayoutProps<'/'>) {
   const {isEnabled: isDraftMode} = await draftMode()
+  const {data: footer} = await sanityFetch({query: footerQuery})
+  const legalMenu = (footer?.legalMenu ?? []) as DereferencedLegalMenuItem[]
 
   return (
     <html lang="en" className={`${inter.variable} ${ibmPlexMono.variable} bg-white text-black`}>
       <body>
-        <section className="min-h-screen pt-24">
+        <section className="flex flex-col min-h-screen pt-24">
           {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
           <Toaster />
           {isDraftMode && (
@@ -84,8 +87,10 @@ export default async function RootLayout({children}: LayoutProps<'/'>) {
           {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
           <SanityLive onError={handleError} />
           <Header />
-          <main className="">{children}</main>
-          <Footer />
+          <main className="grow">
+            {children}
+          </main>
+          <Footer legalMenu={legalMenu} />
         </section>
         <SpeedInsights />
       </body>
