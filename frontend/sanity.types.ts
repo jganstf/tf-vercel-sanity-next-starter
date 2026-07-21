@@ -15,6 +15,51 @@
 export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: ../sanity.schema.json
+export type FormReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'form'
+}
+
+export type FormBlock = {
+  _type: 'formBlock'
+  form: FormReference
+}
+
+export type FormField = {
+  _type: 'formField'
+  label: string
+  name: string
+  fieldType:
+    | 'text'
+    | 'email'
+    | 'phone'
+    | 'textarea'
+    | 'url'
+    | 'time'
+    | 'select'
+    | 'multiSelect'
+    | 'radio'
+    | 'consent'
+    | 'html'
+    | 'file'
+  required?: boolean
+  helpText?: string
+  minLength?: number
+  maxLength?: number
+  options?: Array<{
+    label: string
+    value: string
+    _type: 'option'
+    _key: string
+  }>
+  consentLabel?: string
+  content?: BlockContentTextOnly
+  maxSizeMb?: number
+  allowedTypes?: Array<string>
+}
+
 export type PageReference = {
   _ref: string
   _type: 'reference'
@@ -148,6 +193,65 @@ export type Button = {
   link?: Link
 }
 
+export type SanityFileAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
+}
+
+export type FormSubmission = {
+  _id: string
+  _type: 'formSubmission'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  form?: FormReference
+  submittedAt?: string
+  values?: Array<{
+    fieldName?: string
+    value?: string
+    _type: 'value'
+    _key: string
+  }>
+  files?: Array<{
+    fieldName?: string
+    asset?: {
+      asset?: SanityFileAssetReference
+      media?: unknown
+      _type: 'file'
+    }
+    _type: 'fileEntry'
+    _key: string
+  }>
+  spamMeta?: {
+    captchaProvider?: string
+    captchaScore?: number
+    honeypotTriggered?: boolean
+    timeToSubmitMs?: number
+  }
+}
+
+export type Form = {
+  _id: string
+  _type: 'form'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title: string
+  fields: Array<
+    {
+      _key: string
+    } & FormField
+  >
+  captchaEnabled?: boolean
+  successBehavior?: {
+    type?: 'message' | 'redirect'
+    message?: string
+    redirectUrl?: string
+  }
+}
+
 export type Footer = {
   _id: string
   _type: 'footer'
@@ -245,6 +349,9 @@ export type Page = {
     | ({
         _key: string
       } & HeroSecondary)
+    | ({
+        _key: string
+      } & FormBlock)
   >
   seo?: Seo
 }
@@ -546,6 +653,9 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
+  | FormReference
+  | FormBlock
+  | FormField
   | PageReference
   | PostReference
   | Link
@@ -557,6 +667,9 @@ export type AllSanitySchemaTypes =
   | BlockContentTextOnly
   | BlockContent
   | Button
+  | SanityFileAssetReference
+  | FormSubmission
+  | Form
   | Footer
   | Settings
   | SanityImageCrop
@@ -700,6 +813,11 @@ export type GetPageQueryResult = {
         }
         theme?: 'dark' | 'light'
         contentAlignment?: 'imageFirst' | 'textFirst'
+      }
+    | {
+        _key: string
+        _type: 'formBlock'
+        form: FormReference
       }
     | {
         _key: string
