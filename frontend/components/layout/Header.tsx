@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { settingsQuery } from '@/sanity/lib/queries'
 import { sanityFetch } from '@/sanity/lib/live'
-import Banner from './Banner'
-import TopNav from './TopNav'
+// import Banner from './Banner'
+// import TopNav from './TopNav'
 
 export default async function Header() {
   const { data: settings } = await sanityFetch({
@@ -12,9 +12,9 @@ export default async function Header() {
   return (
     <>
       <header className="fixed z-50 h-24 inset-0 bg-white/80 backdrop-blur-lg">
-        <Banner />
-        <TopNav />
-        <div className=" flex items-center ">
+        {/* <Banner /> */}
+        {/* <TopNav /> */}
+        <div className=" flex items-center">
           <div className="_container px-global-margin py-6 w-full">
             <div className="flex items-center justify-between gap-5 tf-max-w">
               <Link className="flex items-center gap-2" href="/">
@@ -23,7 +23,7 @@ export default async function Header() {
                 </span>
               </Link>
 
-              <nav>
+              <nav className="hidden">
                 <ul
                   role="list"
                   className="flex items-center gap-4 md:gap-6 leading-5 text-xs sm:text-base tracking-tight font-mono"
