@@ -24,7 +24,8 @@ export async function submitForm(_prev: FormState, formData: FormData): Promise<
   if (!form) return {status: 'error', message: GENERIC_SPAM_ERROR}
 
   const now = Date.now()
-  const renderedAt = Number(formData.get('_renderedAt'))
+  const rawRenderedAt = formData.get('_renderedAt')
+  const renderedAt = rawRenderedAt ? Number(rawRenderedAt) : NaN
   const honeypotTriggered = isHoneypotTriggered(formData.get(HONEYPOT_FIELD))
 
   // Spam layer 1 + 2: honeypot and timing. Generic rejection — don't tip off bots.

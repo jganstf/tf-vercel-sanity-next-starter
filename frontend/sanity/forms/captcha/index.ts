@@ -1,3 +1,4 @@
+import 'server-only'
 import type {CaptchaProvider} from './types'
 import {createRecaptchaProvider} from './recaptcha'
 import {createTurnstileProvider} from './turnstile'

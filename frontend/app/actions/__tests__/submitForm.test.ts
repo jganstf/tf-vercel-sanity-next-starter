@@ -103,6 +103,19 @@ describe('submitForm', () => {
     expect(createMock).not.toHaveBeenCalled()
   })
 
+  it('rejects a submission with _renderedAt omitted entirely', async () => {
+    const submitForm = await loadAction()
+    const form = new FormData()
+    form.set('_formId', 'form-1')
+    // Intentionally never set `_renderedAt` to simulate a hand-crafted bot POST.
+    form.set('email', 'a@b.co')
+    form.set('message', 'hello there')
+    form.set('company_website', '')
+    const state = await submitForm({status: 'idle'}, form)
+    expect(state.status).toBe('error')
+    expect(createMock).not.toHaveBeenCalled()
+  })
+
   it('errors when the form cannot be found', async () => {
     fetchMock.mockResolvedValue({data: null})
     const submitForm = await loadAction()

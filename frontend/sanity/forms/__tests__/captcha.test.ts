@@ -73,4 +73,7 @@ describe('getCaptchaProvider', () => {
       getCaptchaProvider({NEXT_PUBLIC_CAPTCHA_PROVIDER: 'recaptcha'} as never),
     ).toBeNull()
   })
+  it('returns null when the turnstile secret is missing', () => {
+    expect(getCaptchaProvider({NEXT_PUBLIC_CAPTCHA_PROVIDER: 'turnstile'} as never)).toBeNull()
+  })
 })
