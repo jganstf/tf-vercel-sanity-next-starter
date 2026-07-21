@@ -48,6 +48,11 @@ describe('validateFile', () => {
     const ok = new File([new Uint8Array(10)], 'r.pdf', {type: 'application/pdf'})
     expect(validateFile(field, ok)).toBeNull()
   })
+  it('accepts a file by extension when the MIME type differs', () => {
+    const extField: FormFieldDef = {_key: '5', label: 'Doc', name: 'doc', fieldType: 'file', allowedTypes: ['.pdf']}
+    const ok = new File([new Uint8Array(10)], 'r.pdf', {type: 'text/plain'})
+    expect(validateFile(extField, ok)).toBeNull()
+  })
 })
 
 describe('extractFiles', () => {
