@@ -38,6 +38,14 @@ export type Link = {
   openInNewTab?: boolean
 }
 
+export type Archive = {
+  _type: 'archive'
+  heading?: string
+  subheading?: string
+  documentType: 'post'
+  limit?: number
+}
+
 export type SanityImageAssetReference = {
   _ref: string
   _type: 'reference'
@@ -200,6 +208,9 @@ export type Page = {
     | ({
         _key: string
       } & InfoSection)
+    | ({
+        _key: string
+      } & Archive)
   >
 }
 
@@ -494,6 +505,7 @@ export type AllSanitySchemaTypes =
   | PageReference
   | PostReference
   | Link
+  | Archive
   | SanityImageAssetReference
   | CallToAction
   | InfoSection

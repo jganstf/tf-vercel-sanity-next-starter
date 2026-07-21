@@ -53,6 +53,12 @@ export const getPageQuery = defineQuery(`
           }
         }
       },
+      _type == "archive" => {
+        ...,
+        "items": *[_type == ^.documentType && defined(slug.current)] | order(date desc, _updatedAt desc) {
+          ${postFields}
+        },
+      },
     },
   }
 `)
