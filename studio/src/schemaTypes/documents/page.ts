@@ -90,7 +90,7 @@ export const page = defineType({
       title: 'Page builder',
       type: 'array',
       group: 'content',
-      of: [{type: 'callToAction'}, {type: 'infoSection'}, {type: 'heroSecondary'}],
+      of: [{type: 'callToAction'}, {type: 'infoSection'}, {type: 'heroSecondary'}, {type: 'formBlock'}],
       options: {
         insertMenu: {
           // Configure the "Add Item" menu to display a thumbnail preview of the content type. https://www.sanity.io/docs/studio/array-type#efb1fe03459d
