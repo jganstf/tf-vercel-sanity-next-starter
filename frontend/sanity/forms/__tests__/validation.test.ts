@@ -47,6 +47,14 @@ describe('validateField', () => {
     expect(validateField(field({fieldType: 'url'}), 'https://x.dev')).toBeNull()
   })
 
+  it('rejects a malformed phone', () => {
+    expect(validateField(field({fieldType: 'phone'}), 'abc')).toMatch(/valid phone/i)
+  })
+
+  it('accepts a well-formed phone', () => {
+    expect(validateField(field({fieldType: 'phone'}), '+1 (555) 123-4567')).toBeNull()
+  })
+
   it('requires consent when required', () => {
     expect(validateField(field({fieldType: 'consent', required: true}), 'false')).toMatch(/required/i)
     expect(validateField(field({fieldType: 'consent', required: true}), 'true')).toBeNull()
