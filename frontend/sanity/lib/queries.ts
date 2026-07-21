@@ -44,6 +44,34 @@ const linkFields = /* groq */ `
       }
 `
 
+const formFieldsFragment = /* groq */ `
+  _id,
+  title,
+  captchaEnabled,
+  successBehavior,
+  fields[]{
+    _key,
+    label,
+    name,
+    fieldType,
+    required,
+    helpText,
+    minLength,
+    maxLength,
+    options[]{label, value},
+    consentLabel,
+    maxSizeMb,
+    allowedTypes,
+    content
+  }
+`
+
+export const formByIdQuery = defineQuery(`
+  *[_type == "form" && _id == $id][0]{
+    ${formFieldsFragment}
+  }
+`)
+
 export const footerQuery = defineQuery(`
   *[_type == "footer"][0]{
     legalMenu[]{
@@ -83,6 +111,13 @@ export const getPageQuery = defineQuery(`
             ...,
             ${linkReference}
           }
+        }
+      },
+      _type == "formBlock" => {
+        _type,
+        _key,
+        "form": form->{
+          ${formFieldsFragment}
         }
       },
     },

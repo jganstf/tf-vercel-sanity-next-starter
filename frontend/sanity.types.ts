@@ -746,6 +746,50 @@ export type SettingsQueryResult = {
 } | null
 
 // Source: sanity/lib/queries.ts
+// Variable: formByIdQuery
+// Query: *[_type == "form" && _id == $id][0]{      _id,  title,  captchaEnabled,  successBehavior,  fields[]{    _key,    label,    name,    fieldType,    required,    helpText,    minLength,    maxLength,    options[]{label, value},    consentLabel,    maxSizeMb,    allowedTypes,    content  }  }
+export type FormByIdQueryResult = {
+  _id: string
+  title: string
+  captchaEnabled: boolean | null
+  successBehavior: {
+    type?: 'message' | 'redirect'
+    message?: string
+    redirectUrl?: string
+  } | null
+  fields: Array<{
+    _key: string
+    label: string
+    name: string
+    fieldType:
+      | 'consent'
+      | 'email'
+      | 'file'
+      | 'html'
+      | 'multiSelect'
+      | 'phone'
+      | 'radio'
+      | 'select'
+      | 'text'
+      | 'textarea'
+      | 'time'
+      | 'url'
+    required: boolean | null
+    helpText: string | null
+    minLength: number | null
+    maxLength: number | null
+    options: Array<{
+      label: string
+      value: string
+    }> | null
+    consentLabel: string | null
+    maxSizeMb: number | null
+    allowedTypes: Array<string> | null
+    content: BlockContentTextOnly | null
+  }>
+} | null
+
+// Source: sanity/lib/queries.ts
 // Variable: footerQuery
 // Query: *[_type == "footer"][0]{    legalMenu[]{      label,        link {      ...,        _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }      }    }  }
 export type FooterQueryResult = {
@@ -764,7 +808,7 @@ export type FooterQueryResult = {
 
 // Source: sanity/lib/queries.ts
 // Variable: getPageQuery
-// Query: *[_type == 'page']{    _id,    _type,    title,    slug,    parent,    "path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  ),    "seo": {      "title": coalesce(seo.title, title),      "description": seo.description,      "image": seo.image,      "noIndex": seo.noIndex == true    },    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {        ...,        button {          ...,            link {      ...,        _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }      }        }      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }          }        }      },    },  }[path == $slug][0]
+// Query: *[_type == 'page']{    _id,    _type,    title,    slug,    parent,    "path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  ),    "seo": {      "title": coalesce(seo.title, title),      "description": seo.description,      "image": seo.image,      "noIndex": seo.noIndex == true    },    "pageBuilder": pageBuilder[]{      ...,      _type == "callToAction" => {        ...,        button {          ...,            link {      ...,        _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }      }        }      },      _type == "infoSection" => {        content[]{          ...,          markDefs[]{            ...,              _type == "link" => {    "page": page->{"path":   array::join(    [      parent->parent->parent->parent->slug.current,      parent->parent->parent->slug.current,      parent->parent->slug.current,      parent->slug.current,      slug.current    ][defined(@)],    "/"  )}.path,    "post": post->slug.current  }          }        }      },      _type == "formBlock" => {        _type,        _key,        "form": form->{            _id,  title,  captchaEnabled,  successBehavior,  fields[]{    _key,    label,    name,    fieldType,    required,    helpText,    minLength,    maxLength,    options[]{label, value},    consentLabel,    maxSizeMb,    allowedTypes,    content  }        }      },    },  }[path == $slug][0]
 export type GetPageQueryResult = {
   _id: string
   _type: 'page'
@@ -817,7 +861,46 @@ export type GetPageQueryResult = {
     | {
         _key: string
         _type: 'formBlock'
-        form: FormReference
+        form: {
+          _id: string
+          title: string
+          captchaEnabled: boolean | null
+          successBehavior: {
+            type?: 'message' | 'redirect'
+            message?: string
+            redirectUrl?: string
+          } | null
+          fields: Array<{
+            _key: string
+            label: string
+            name: string
+            fieldType:
+              | 'consent'
+              | 'email'
+              | 'file'
+              | 'html'
+              | 'multiSelect'
+              | 'phone'
+              | 'radio'
+              | 'select'
+              | 'text'
+              | 'textarea'
+              | 'time'
+              | 'url'
+            required: boolean | null
+            helpText: string | null
+            minLength: number | null
+            maxLength: number | null
+            options: Array<{
+              label: string
+              value: string
+            }> | null
+            consentLabel: string | null
+            maxSizeMb: number | null
+            allowedTypes: Array<string> | null
+            content: BlockContentTextOnly | null
+          }>
+        }
       }
     | {
         _key: string
@@ -1031,8 +1114,9 @@ import '@sanity/client'
 declare module '@sanity/client' {
   interface SanityQueries {
     '*[_type == "settings"][0]': SettingsQueryResult
+    '\n  *[_type == "form" && _id == $id][0]{\n    \n  _id,\n  title,\n  captchaEnabled,\n  successBehavior,\n  fields[]{\n    _key,\n    label,\n    name,\n    fieldType,\n    required,\n    helpText,\n    minLength,\n    maxLength,\n    options[]{label, value},\n    consentLabel,\n    maxSizeMb,\n    allowedTypes,\n    content\n  }\n\n  }\n': FormByIdQueryResult
     '\n  *[_type == "footer"][0]{\n    legalMenu[]{\n      label,\n      \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n      }\n\n    }\n  }\n': FooterQueryResult
-    '\n  *[_type == \'page\']{\n    _id,\n    _type,\n    title,\n    slug,\n    parent,\n    "path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n,\n    "seo": {\n      "title": coalesce(seo.title, title),\n      "description": seo.description,\n      "image": seo.image,\n      "noIndex": seo.noIndex == true\n    },\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n    },\n  }[path == $slug][0]\n': GetPageQueryResult
+    '\n  *[_type == \'page\']{\n    _id,\n    _type,\n    title,\n    slug,\n    parent,\n    "path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n,\n    "seo": {\n      "title": coalesce(seo.title, title),\n      "description": seo.description,\n      "image": seo.image,\n      "noIndex": seo.noIndex == true\n    },\n    "pageBuilder": pageBuilder[]{\n      ...,\n      _type == "callToAction" => {\n        ...,\n        button {\n          ...,\n          \n  link {\n      ...,\n      \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n      }\n\n        }\n      },\n      _type == "infoSection" => {\n        content[]{\n          ...,\n          markDefs[]{\n            ...,\n            \n  _type == "link" => {\n    "page": page->{"path": \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n}.path,\n    "post": post->slug.current\n  }\n\n          }\n        }\n      },\n      _type == "formBlock" => {\n        _type,\n        _key,\n        "form": form->{\n          \n  _id,\n  title,\n  captchaEnabled,\n  successBehavior,\n  fields[]{\n    _key,\n    label,\n    name,\n    fieldType,\n    required,\n    helpText,\n    minLength,\n    maxLength,\n    options[]{label, value},\n    consentLabel,\n    maxSizeMb,\n    allowedTypes,\n    content\n  }\n\n        }\n      },\n    },\n  }[path == $slug][0]\n': GetPageQueryResult
     '\n  *[_type == "page" || _type == "post" && defined(slug.current)] | order(_type asc) {\n    "slug": select(_type == "page" => \n  array::join(\n    [\n      parent->parent->parent->parent->slug.current,\n      parent->parent->parent->slug.current,\n      parent->parent->slug.current,\n      parent->slug.current,\n      slug.current\n    ][defined(@)],\n    "/"\n  )\n, slug.current),\n    _type,\n    _updatedAt,\n  }\n': SitemapDataResult
     '\n  *[_type == "post" && defined(slug.current)] | order(date desc, _updatedAt desc) {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': AllPostsQueryResult
     '\n  *[_type == "post" && _id != $skip && defined(slug.current)] | order(date desc, _updatedAt desc) [0...$limit] {\n    \n  _id,\n  "status": select(_originalId in path("drafts.**") => "draft", "published"),\n  "title": coalesce(title, "Untitled"),\n  "slug": slug.current,\n  excerpt,\n  coverImage,\n  "date": coalesce(date, _updatedAt),\n  "author": author->{firstName, lastName, picture},\n\n  }\n': MorePostsQueryResult
