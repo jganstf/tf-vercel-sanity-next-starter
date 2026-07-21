@@ -13,6 +13,36 @@ export const footer = defineType({
   icon: DocumentIcon,
   fields: [
     defineField({
+      name: 'footerMenu',
+      title: 'Footer Menu',
+      description: 'Links shown in the main footer navigation.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'footerMenuItem',
+          title: 'Footer Menu Item',
+          fields: [
+            defineField({
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'link',
+              title: 'Link',
+              type: 'link',
+              validation: (rule) => rule.required(),
+            }),
+          ],
+          preview: {
+            select: {title: 'label'},
+          },
+        }),
+      ],
+    }),
+    defineField({
       name: 'legalMenu',
       title: 'Legal Menu',
       description: 'Links shown in the footer bottom bar, e.g. Privacy Policy, Terms of Service.',

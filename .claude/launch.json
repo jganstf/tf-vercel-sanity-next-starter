@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "storybook", "--workspace=frontend"],
       "port": 6006
+    },
+    {
+      "name": "studio",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace=studio"],
+      "port": 3333
     }
   ]
 }
