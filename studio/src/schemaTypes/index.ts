@@ -6,6 +6,7 @@ import {infoSection} from './objects/infoSection'
 import {heroSecondary} from './objects/heroSecondary'
 import {seo} from './objects/seo'
 import {settings} from './singletons/settings'
+import {header} from './singletons/header'
 import {footer} from './singletons/footer'
 import {link} from './objects/link'
 import {blockContent} from './objects/blockContent'
@@ -17,6 +18,7 @@ import {blockContentTextOnly} from './objects/blockContentTextOnly'
 export const schemaTypes = [
   // Singletons
   settings,
+  header,
   footer,
   // Documents
   page,

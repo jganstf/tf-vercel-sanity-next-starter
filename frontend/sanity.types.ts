@@ -154,10 +154,30 @@ export type Footer = {
   _createdAt: string
   _updatedAt: string
   _rev: string
+  footerMenu?: Array<{
+    label: string
+    link: Link
+    _type: 'footerMenuItem'
+    _key: string
+  }>
   legalMenu?: Array<{
     label: string
     link: Link
     _type: 'legalMenuItem'
+    _key: string
+  }>
+}
+
+export type Header = {
+  _id: string
+  _type: 'header'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  headerMenu?: Array<{
+    label: string
+    link: Link
+    _type: 'headerMenuItem'
     _key: string
   }>
 }
@@ -558,6 +578,7 @@ export type AllSanitySchemaTypes =
   | BlockContent
   | Button
   | Footer
+  | Header
   | Settings
   | SanityImageCrop
   | SanityImageHotspot
