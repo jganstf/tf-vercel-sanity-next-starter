@@ -32,7 +32,8 @@ next-env.d.ts
 
 # VS Code
 .vscode
-.env*
+
+/scripts/data/
 
 **/.superpowers/
 **/.worktrees/
