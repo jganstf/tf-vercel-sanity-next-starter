@@ -135,6 +135,28 @@ describe('submitForm', () => {
     expect(createMock).toHaveBeenCalledTimes(1)
   })
 
+  it('rejects with the generic message when CAPTCHA verification throws', async () => {
+    fetchMock.mockResolvedValue({data: formDefWithCaptcha})
+    captchaProviderMock.mockReturnValue({
+      name: 'recaptcha',
+      verify: vi.fn().mockRejectedValue(new Error('network timeout')),
+    })
+    const submitForm = await loadAction()
+    const state = await submitForm({status: 'idle'}, baseForm({_captchaToken: 'tok'}))
+    expect(state.status).toBe('error')
+    expect(createMock).not.toHaveBeenCalled()
+  })
+
+  it('rejects with the generic message when writeClient.create throws', async () => {
+    createMock.mockRejectedValueOnce(new Error('missing SANITY_API_WRITE_TOKEN'))
+    const submitForm = await loadAction()
+    const state = await submitForm({status: 'idle'}, baseForm())
+    expect(state.status).toBe('error')
+    expect(state.message).toBe(
+      'We could not process your submission. Please try again.',
+    )
+  })
+
   it('returns a field error and does not upload/write when file validation fails', async () => {
     fetchMock.mockResolvedValue({data: formDefWithFile})
     const oversizedFile = new File([new Uint8Array(2 * 1024 * 1024)], 'big.pdf', {

@@ -37,9 +37,15 @@ export async function submitForm(_prev: FormState, formData: FormData): Promise<
   let captchaScore: number | undefined
   if (form.captchaEnabled && provider) {
     const token = String(formData.get('_captchaToken') ?? '')
-    const result = await provider.verify(token)
-    captchaScore = result.score
-    if (!result.success) {
+    try {
+      const result = await provider.verify(token)
+      captchaScore = result.score
+      if (!result.success) {
+        return {status: 'error', message: GENERIC_SPAM_ERROR}
+      }
+    } catch {
+      // Fail closed: a verify() failure (network/timeout) is treated the same
+      // as a failed CAPTCHA — don't silently skip the spam check.
       return {status: 'error', message: GENERIC_SPAM_ERROR}
     }
   }
@@ -55,33 +61,39 @@ export async function submitForm(_prev: FormState, formData: FormData): Promise<
   const files = extractFiles(form.fields, formData)
   const fileRefs: SubmissionFileRef[] = []
   const writeClient = getWriteClient()
-  for (const {fieldName, file} of files) {
-    const field = form.fields.find((f) => f.name === fieldName)!
-    const fileError = validateFile(field, file)
-    if (fileError) {
-      return {status: 'error', errors: {[fieldName]: fileError}, message: 'Please correct the highlighted fields.'}
+  try {
+    for (const {fieldName, file} of files) {
+      const field = form.fields.find((f) => f.name === fieldName)!
+      const fileError = validateFile(field, file)
+      if (fileError) {
+        return {status: 'error', errors: {[fieldName]: fileError}, message: 'Please correct the highlighted fields.'}
+      }
+      const asset = await writeClient.assets.upload('file', file, {filename: file.name})
+      fileRefs.push({_key: `file-${fieldName}`, fieldName, asset: {_type: 'reference', _ref: asset._id}})
     }
-    const asset = await writeClient.assets.upload('file', file, {filename: file.name})
-    fileRefs.push({_key: `file-${fieldName}`, fieldName, asset: {_type: 'reference', _ref: asset._id}})
+
+    const spamMeta: SpamMeta = {
+      captchaProvider: provider?.name ?? 'none',
+      captchaScore,
+      honeypotTriggered,
+      timeToSubmitMs: timeToSubmitMs(renderedAt, now),
+    }
+
+    const doc = buildSubmissionDoc({
+      formId: form._id,
+      fields: form.fields,
+      values,
+      submittedAt: new Date(now).toISOString(),
+      fileRefs,
+      spamMeta,
+    })
+
+    await writeClient.create(doc)
+  } catch {
+    // Upload or write failed (missing token, network error, etc.) — don't leak
+    // raw error details to the client.
+    return {status: 'error', message: GENERIC_SPAM_ERROR}
   }
-
-  const spamMeta: SpamMeta = {
-    captchaProvider: provider?.name ?? 'none',
-    captchaScore,
-    honeypotTriggered,
-    timeToSubmitMs: timeToSubmitMs(renderedAt, now),
-  }
-
-  const doc = buildSubmissionDoc({
-    formId: form._id,
-    fields: form.fields,
-    values,
-    submittedAt: new Date(now).toISOString(),
-    fileRefs,
-    spamMeta,
-  })
-
-  await writeClient.create(doc)
 
   if (form.successBehavior?.type === 'redirect' && form.successBehavior.redirectUrl) {
     redirect(form.successBehavior.redirectUrl)
