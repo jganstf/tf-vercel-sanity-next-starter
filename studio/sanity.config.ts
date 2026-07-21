@@ -161,6 +161,17 @@ export default defineConfig({
     visionTool(),
   ],
 
+  // Form submissions are authored only by the website's submit action.
+  // Keep them out of the global "＋ Create" menu and strip create/edit actions;
+  // combined with `readOnly: true` on the schema, editors can browse but not author.
+  document: {
+    newDocumentOptions: (prev) => prev.filter((template) => template.templateId !== 'formSubmission'),
+    actions: (prev, {schemaType}) =>
+      schemaType === 'formSubmission'
+        ? prev.filter(({action}) => action === 'delete')
+        : prev,
+  },
+
   // Schema configuration, imported from ./src/schemaTypes/index.ts
   schema: {
     types: schemaTypes,
