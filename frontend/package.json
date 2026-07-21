@@ -10,6 +10,8 @@
     "lint:fix": "eslint . --fix",
     "sanity:typegen": "cd ../studio && sanity schema extract --enforce-required-fields --path ../sanity.schema.json && cd ../frontend && sanity typegen generate",
     "start": "next start",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "type-check": "next typegen && tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -44,6 +46,7 @@
     "eslint-config-next": "^16.2.7",
     "eslint-plugin-storybook": "^10.5.2",
     "storybook": "^10.5.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }
