@@ -45,6 +45,27 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
 }
 
+export type Seo = {
+  _type: 'seo'
+  title?: string
+  description?: string
+  image?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
+  noIndex?: boolean
+}
+
+export type HeroSecondary = {
+  _type: 'heroSecondary'
+  heading?: string
+  description?: string
+}
+
 export type CallToAction = {
   _type: 'callToAction'
   eyebrow?: string
@@ -127,6 +148,20 @@ export type Button = {
   link?: Link
 }
 
+export type Footer = {
+  _id: string
+  _type: 'footer'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  legalMenu?: Array<{
+    label: string
+    link: Link
+    _type: 'legalMenuItem'
+    _key: string
+  }>
+}
+
 export type Settings = {
   _id: string
   _type: 'settings'
@@ -189,10 +224,17 @@ export type Page = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  name: string
+  title: string
   slug: Slug
-  heading: string
-  subheading?: string
+  parent?: PageReference
+  coverImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    alt?: string
+    _type: 'image'
+  }
   pageBuilder?: Array<
     | ({
         _key: string
@@ -200,7 +242,11 @@ export type Page = {
     | ({
         _key: string
       } & InfoSection)
+    | ({
+        _key: string
+      } & HeroSecondary)
   >
+  seo?: Seo
 }
 
 export type PersonReference = {
@@ -393,6 +439,15 @@ export type SanityAssistSchemaTypeField = {
   >
 }
 
+export type MediaTag = {
+  _id: string
+  _type: 'media.tag'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: Slug
+}
+
 export type SanityImagePaletteSwatch = {
   _type: 'sanity.imagePaletteSwatch'
   background?: string
@@ -495,11 +550,14 @@ export type AllSanitySchemaTypes =
   | PostReference
   | Link
   | SanityImageAssetReference
+  | Seo
+  | HeroSecondary
   | CallToAction
   | InfoSection
   | BlockContentTextOnly
   | BlockContent
   | Button
+  | Footer
   | Settings
   | SanityImageCrop
   | SanityImageHotspot
@@ -521,6 +579,7 @@ export type AllSanitySchemaTypes =
   | SanityAssistInstructionFieldRef
   | SanityAssistInstruction
   | SanityAssistSchemaTypeField
+  | MediaTag
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions

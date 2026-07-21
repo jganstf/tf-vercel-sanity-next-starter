@@ -10,7 +10,11 @@
     "lint:fix": "eslint . --fix",
     "sanity:typegen": "cd ../studio && sanity schema extract --enforce-required-fields --path ../sanity.schema.json && cd ../frontend && sanity typegen generate",
     "start": "next start",
-    "type-check": "next typegen && tsc --noEmit"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "next typegen && tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@sanity/client": "^7.22.1",
@@ -32,11 +36,17 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
+    "@storybook/addon-a11y": "^10.5.2",
+    "@storybook/addon-docs": "^10.5.2",
+    "@storybook/nextjs": "^10.5.2",
     "@types/node": "^22.19.19",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.7",
-    "typescript": "^5.9.3"
+    "eslint-plugin-storybook": "^10.5.2",
+    "storybook": "^10.5.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }

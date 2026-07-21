@@ -1,0 +1,8 @@
+@theme {
+    --spacing-md: 2.5rem;
+    --spacing-global-margin: 4rem;
+}
+
+.tf-max-w {
+    @apply max-w-[120rem] mx-auto w-full;
+}
