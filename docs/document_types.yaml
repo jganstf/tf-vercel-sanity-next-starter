@@ -1,0 +1,14 @@
+document_types:
+  - name: Page
+    description: A page in the website
+    taxonomy: [content, marketing]
+  - name: Post
+    description: A blog post
+  - name: People
+    description: A person in the organization
+    taxonomy: 
+      - name: department
+        description: The department of the person
+        values: [employee, contractor]
+
+
